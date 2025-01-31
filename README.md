@@ -4,6 +4,8 @@
 
 [Converters](#converters)
 
+[ViewModelCreator](#viewmodelcreator)
+
 ## AppDatabaseMigrationManager
 
 ```kt
@@ -114,4 +116,16 @@ interface TwoWayBaseConverter<A, B> {
     }
 }
 
+```
+
+## ViewModelCreator
+
+```kt
+/**
+* creating a view model with parameters using a factory and a creator
+* @param creator for viewModel 
+*/
+inline fun <reified VM : ViewModel> AppCompatActivity.viewModelCreator(noinline creator: () -> VM): Lazy<VM> {
+    return viewModels { ViewModelFactory(creator) }
+}
 ```
