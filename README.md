@@ -121,11 +121,44 @@ interface TwoWayBaseConverter<A, B> {
 ## ViewModelCreator
 
 ```kt
+
 /**
-* creating a view model with parameters using a factory and a creator
-* @param creator for viewModel 
-*/
-inline fun <reified VM : ViewModel> AppCompatActivity.viewModelCreator(noinline creator: () -> VM): Lazy<VM> {
-    return viewModels { ViewModelFactory(creator) }
+ * A factory class for creating ViewModel instances.
+ *
+ * @param VM The type of ViewModel that this factory creates.
+ * @property viewModelCreator A lambda function that returns an instance of VM.
+ */
+class ViewModelFactory<VM : ViewModel>(
+    private val viewModelCreator: () -> VM
+) : ViewModelProvider.Factory {
+
+    /**
+     * Creates a ViewModel instance based on the provided model class.
+     *
+     * @param T The type of ViewModel to be created.
+     * @param modelClass The class of the ViewModel to create.
+     * @return An instance of the specified ViewModel type.
+     */
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModelCreator() as T
 }
+
+/**
+ * Extension function for Fragment to create a lazy ViewModel instance.
+ *
+ * @param VM The type of ViewModel to be created.
+ * @param creator A lambda function that returns an instance of VM.
+ * @return A Lazy instance of the specified ViewModel type.
+ */
+inline fun <reified VM : ViewModel> Fragment.viewModelCreator(noinline creator: () -> VM): Lazy<VM> =
+    viewModels { ViewModelFactory(creator) }
+
+/**
+ * Extension function for AppCompatActivity to create a lazy ViewModel instance.
+ *
+ * @param VM The type of ViewModel to be created.
+ * @param creator A lambda function that returns an instance of VM.
+ * @return A Lazy instance of the specified ViewModel type.
+ */
+inline fun <reified VM : ViewModel> AppCompatActivity.viewModelCreator(noinline creator: () -> VM): Lazy<VM> =
+    viewModels { ViewModelFactory(creator) }
 ```
