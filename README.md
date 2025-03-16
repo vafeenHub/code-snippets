@@ -6,6 +6,8 @@
 
 [ViewModelCreator](#viewmodelcreator)
 
+[Java jar file with manifest](#java-jar)
+
 ## AppDatabaseMigrationManager
 
 ```kt
@@ -161,4 +163,16 @@ inline fun <reified VM : ViewModel> Fragment.viewModelCreator(noinline creator: 
  */
 inline fun <reified VM : ViewModel> AppCompatActivity.viewModelCreator(noinline creator: () -> VM): Lazy<VM> =
     viewModels { ViewModelFactory(creator) }
+```
+
+## java-jar
+
+```kt
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "org.example.MainKt"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
 ```
