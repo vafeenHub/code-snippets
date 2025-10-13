@@ -8,6 +8,8 @@
 
 [Java jar file with manifest](#java-jar)
 
+[Libs don't work in release kotlin multiplatform](#lib-in-jar)
+
 ## AppDatabaseMigrationManager
 
 ```kt
@@ -174,5 +176,32 @@ tasks.jar {
     }
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+```
+
+## lib-in-jar
+
+Add this line to your composeApp/build.gradle.kts if your custom libraries don't work in release distr
+
+```kt
+compose.desktop {
+    application {
+        mainClass = "org.example.project.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "SplitKitCat"
+            packageVersion = "1.0.0"
+        }
+        buildTypes.release.proguard {
+            isEnabled = true
+            obfuscate = true
+            optimize = true
+            joinOutputJars = true
+            configurationFiles.from(
+                file("proguard-rules.pro")
+            )
+        }
+    }
 }
 ```
