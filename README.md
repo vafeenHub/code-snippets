@@ -263,7 +263,6 @@ internal class SettingsManagerImpl(private val sharedPreferences: SharedPreferen
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
             // Эмитим новые настройки, если в SharedPreferences произошло изменение
-            Log.d("sp", "callback")
             _settingsFlow.value = sharedPreferences.getSettingsOrCreateIfNull()
         }
     }
@@ -279,7 +278,6 @@ internal class SettingsManagerImpl(private val sharedPreferences: SharedPreferen
     override fun save(saving: (Settings) -> Settings) {
         // Обновляем настройки в памяти
         settings = saving(settings)
-        Log.d("sp", "save ${settings.toJsonString()}")
         // Сохраняем обновленные настройки в SharedPreferences
         sharedPreferences.save(settings)
         // Обновляем flow
