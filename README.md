@@ -8,6 +8,8 @@
 
 [Java jar file with manifest](#java-jar)
 
+[Compose for Desktop jar](#compose-for-desktop-jar)
+
 [Libs don't work in release kotlin multiplatform](#lib-in-jar)
 
 [Settings manager](#settings-manager)
@@ -181,6 +183,19 @@ tasks.jar {
 }
 ```
 
+## compose-for-desktop-jar
+```kt
+tasks.register<Jar>("fatJar") {
+    manifest {
+        attributes["Main-Class"] = "org.example.project.MainKt"
+    }
+    archiveBaseName.set("SplitKitCat-fat")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(kotlin.targets.getByName("jvm").compilations.getByName("main").output)
+    from({ configurations.getByName("jvmRuntimeClasspath").map { if (it.isDirectory) it else zipTree(it) } })
+}
+```
+
 ## lib-in-jar
 
 Add this line to your composeApp/build.gradle.kts if your custom libraries don't work in release distr
@@ -207,6 +222,9 @@ compose.desktop {
     }
 }
 ```
+
+
+
 ## Settings Manager
 
 ```kotlin
